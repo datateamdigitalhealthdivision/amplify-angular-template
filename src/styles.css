@@ -1,65 +1,280 @@
-body {
-    margin: 0;
-    background: linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255));
-    display: flex;
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    height: 100vh;
-    width: 100vw;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  main {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
-    color: white;
-  }
-  button:hover {
-    border-color: #646cff;
-  }
-  button:focus,
-  button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-  }
-  
-  ul {
-    padding-inline-start: 0;
-    margin-block-start: 0;
-    margin-block-end: 0;
-    list-style-type: none;
-    display: flex;
-    flex-direction: column;
-    margin: 8px 0;
-    border: 1px solid black;
-    gap: 1px;
-    background-color: black;
-    border-radius: 8px;
-    overflow: auto;
-  }
-  
-  li {
-    background-color: white;
-    padding: 8px;
-  }
-  
-  li:hover {
-    background: #dadbf9;
-  }
-  
-  a {
-    font-weight: 800;
-    text-decoration: none;
-  }
+@import "@aws-amplify/ui/styles.css";
+
+/* ---- Palette + base tokens ---- */
+:root{
+  --p1:#5b8afa;
+  --p2:#6aa4fb;
+  --p3:#77c4fb;
+  --p4:#93cdfc;
+  --p5:#b2befc;
+  --p6:#d9cafd;
+
+  --card:#ffffff;
+  --text:#101828;
+  --muted:#475467;
+  --border: rgba(16,24,40,0.10);
+  --shadow: 0 12px 30px rgba(0,0,0,0.14);
+  --radius: 18px;
+}
+
+html, body { height: 100%; }
+
+body{
+  margin:0;
+  min-height:100vh;
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+  background:
+    radial-gradient(900px 600px at 70% 55%, var(--p6) 0%, rgba(217,202,253,0) 60%),
+    radial-gradient(1000px 700px at 55% 20%, var(--p4) 0%, rgba(147,205,252,0) 65%),
+    linear-gradient(135deg, var(--p1), var(--p3));
+}
+
+/* ---- Dark mode ---- */
+body.dark{
+  --card:#0b1220;
+  --text:#eef2ff;
+  --muted:#c7d2fe;
+  --border: rgba(255,255,255,0.14);
+  --shadow: 0 14px 36px rgba(0,0,0,0.42);
+}
+
+/* ---- Authenticator centering ---- */
+[data-amplify-authenticator]{
+  min-height: 100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 24px;
+
+  --amplify-components-authenticator-router-border-width: 0;
+  --amplify-components-authenticator-router-box-shadow: 0 14px 34px rgba(0,0,0,0.18);
+  --amplify-components-authenticator-router-border-radius: 18px;
+}
+
+.auth-brand{
+  text-align:center;
+  padding: 12px 0 18px 0;
+}
+
+.auth-logo{
+  width:54px;
+  height:54px;
+  object-fit:contain;
+  border-radius: 14px;
+  background:#fff;
+  padding: 6px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.15);
+}
+
+.auth-title{
+  margin-top: 10px;
+  font-weight: 900;
+  color: #101828;
+  letter-spacing: 0.2px;
+  font-size: 20px;
+}
+
+.auth-subtitle{
+  margin-top: 6px;
+  color: #475467;
+  font-size: 13px;
+}
+
+/* make auth header text readable in dark mode too */
+body.dark .auth-title{ color:#eef2ff; }
+body.dark .auth-subtitle{ color:#c7d2fe; }
+
+/* ---- App layout ---- */
+.page{
+  max-width: 1200px;
+  margin: 18px auto;
+  padding: 0 16px;
+}
+
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+
+.muted{ color: var(--muted); }
+
+/* ---- Header ---- */
+.hdr{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:#fff;
+}
+
+.hdr-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  width:32px;
+  height:32px;
+  object-fit:contain;
+  border-radius:10px;
+  background:#fff;
+  padding:3px;
+}
+
+.title{
+  font-weight:900;
+  font-size: 18px;
+  letter-spacing:0.2px;
+}
+
+.hdr-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.ghost{
+  background: rgba(255,255,255,0.16);
+  color:#fff;
+  border: 1px solid rgba(255,255,255,0.28);
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor:pointer;
+}
+
+.ghost:hover{ background: rgba(255,255,255,0.22); }
+
+/* icon button for sun/moon (always visible) */
+.iconbtn{
+  width:40px;
+  height:40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.16);
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  color:#fff; /* ensures SVG currentColor is visible */
+}
+
+.iconbtn:hover{ background: rgba(255,255,255,0.22); }
+
+.svg-icon{
+  width:22px;
+  height:22px;
+  display:block;
+  fill: currentColor !important;
+}
+
+/* ---- Welcome + avatar ---- */
+.welcome-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 14px;
+}
+
+.welcome-left{
+  flex: 1 1 auto;
+  min-width: 260px;
+}
+
+.welcome-right{
+  flex: 0 0 auto;
+}
+
+.hero-avatar{
+  width:72px;
+  height:72px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.16);
+  background: rgba(255,255,255,0.75);
+}
+
+.hero-initials{
+  display:grid;
+  place-items:center;
+  color:#111;
+  font-weight:900;
+}
+
+/* ---- Catalogue buttons ---- */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.dash-btn{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 14px 14px;
+  border-radius: 16px;
+  text-decoration:none;
+
+  color:#fff;
+  background: linear-gradient(135deg, var(--p1), var(--p5));
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.16);
+
+  transition: transform 120ms ease, filter 120ms ease;
+}
+
+.dash-btn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.icon{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+}
+
+.cat-icon{
+  width:22px;
+  height:22px;
+  display:block;
+  fill: currentColor;
+  color: #fff; /* consistent white silhouettes */
+}
+
+.label{
+  font-weight:900;
+}
+
+/* ---- Footer (white text always) ---- */
+.ftr{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 16px 26px 16px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap: wrap;
+  color:#fff;
+}
+
+.ftr, .ftr *{
+  color:#fff !important;
+}
+
+.ftr a{
+  color:#fff !important;
+  text-decoration: underline;
+}

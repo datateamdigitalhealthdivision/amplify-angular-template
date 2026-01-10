@@ -1,36 +1,21 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-
-type DashboardLink = {
-  id: string;
-  title: string;
-  embedUrl: string;
-};
 
 @Component({
   selector: 'app-dashboards',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   template: `
-    <div style="max-width: 1200px; margin: 24px auto; padding: 0 16px;">
-      <h1>Dashboards</h1>
-
-      <div style="display:flex; flex-wrap:wrap; gap:12px; margin: 12px 0 16px;">
-        <button
-          *ngFor="let d of dashboards"
-          (click)="select(d)"
-          [disabled]="!d.embedUrl"
-          [style.opacity]="d.embedUrl ? '1' : '0.5'"
-          [style.cursor]="d.embedUrl ? 'pointer' : 'not-allowed'"
-          [style.border]="selected?.id === d.id ? '2px solid #111' : '1px solid #ccc'"
-          style="padding:10px 12px; border-radius:10px; background:#fff;">
-          {{ d.title }}
-        </button>
+    <div class="page">
+      <div class="card">
+        <a routerLink="/home" style="text-decoration:none;">← Back</a>
+        <h1 style="margin:10px 0 6px 0;">{{ title }}</h1>
+        <p class="muted" style="margin:0;">MOH Command Centre</p>
       </div>
 
-      <div *ngIf="safeUrl; else chooseOne"
-           style="border:1px solid #ddd; border-radius:14px; overflow:hidden;">
+      <div class="card" *ngIf="safeUrl; else missing" style="padding:0; overflow:hidden;">
         <iframe
           [src]="safeUrl"
           width="100%"
@@ -40,35 +25,45 @@ type DashboardLink = {
         ></iframe>
       </div>
 
-      <ng-template #chooseOne>
-        <p>Select a dashboard above.</p>
+      <ng-template #missing>
+        <div class="card">
+          <p>Dashboard not configured yet.</p>
+        </div>
       </ng-template>
     </div>
   `,
 })
 export class DashboardsComponent {
-  dashboards: DashboardLink[] = [
-    {
-      id: 'ncd',
-      title: 'Non-Communicable Disease Tracker',
-      embedUrl:
-        'https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/405062307026/dashboards/0c71a62b-9891-487f-8866-e1c8491664bc?directory_alias=atikahnasir',
-    },
-    { id: 'ceo', title: 'CEO Overview (coming soon)', embedUrl: '' },
-    { id: 'ops', title: 'Ops & Throughput (coming soon)', embedUrl: '' },
-    { id: 'quality', title: 'Clinical Quality (coming soon)', embedUrl: '' },
-    { id: 'finance', title: 'Finance (coming soon)', embedUrl: '' },
-    { id: 'workforce', title: 'Workforce (coming soon)', embedUrl: '' },
-  ];
-
-  selected: DashboardLink | null = null;
+  title = '';
   safeUrl: SafeResourceUrl | null = null;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(route: ActivatedRoute, sanitizer: DomSanitizer) {
+    const id = route.snapshot.paramMap.get('id') || '';
 
-  select(d: DashboardLink) {
-    if (!d.embedUrl) return;
-    this.selected = d;
-    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(d.embedUrl);
+    const map: Record<string, { title: string; url?: string }> = {
+      hf: {
+        title: 'Health Facilities Tracker',
+        url: 'https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/405062307026/dashboards/f3244991-af8f-4afd-a34d-b070938957bb?directory_alias=atikahnasir',
+      },
+      dig: {
+        title: 'Digitalisation Initiatives Tracker',
+        url: 'https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/405062307026/dashboards/743f9b6d-a5b4-4dc6-92e5-992e9e37024a?directory_alias=atikahnasir',
+      },
+      cd: {
+        title: 'Communicable Disease Tracker',
+        url: 'https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/405062307026/dashboards/086ca3a9-65a1-4297-8b78-1ce933bc4f8b?directory_alias=atikahnasir',
+      },
+      ncd: {
+        title: 'Non-Communicable Disease Tracker',
+        url: 'https://us-east-1.quicksight.aws.amazon.com/sn/embed/share/accounts/405062307026/dashboards/0c71a62b-9891-487f-8866-e1c8491664bc?directory_alias=atikahnasir',
+      },
+    };
+
+    const entry = map[id];
+    this.title = entry?.title || 'Dashboard';
+
+    if (entry?.url) {
+      this.safeUrl = sanitizer.bypassSecurityTrustResourceUrl(entry.url);
+    }
   }
 }

@@ -1,1 +1,20 @@
-<app-todos></app-todos>
+<amplify-authenticator>
+  <ng-template amplifySlot="header">
+    <div class="auth-brand">
+      <img class="auth-logo" src="assets/moh-logo.png" alt="MOH" />
+      <div class="auth-title">MOH Command Centre</div>
+      <div class="auth-subtitle">Secure access for authorised users</div>
+    </div>
+  </ng-template>
+
+  <ng-template amplifySlot="authenticated" let-signOut="signOut">
+    <app-shell
+      (toggleTheme)="toggleTheme()"
+      [isDark]="isDark"
+      (signOutRequested)="signOut()"
+    >
+      <router-outlet></router-outlet>
+    </app-shell>
+  </ng-template>
+</amplify-authenticator>
+
